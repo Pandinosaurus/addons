@@ -1,9 +1,12 @@
 name: Notify codeowners
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened]
 
+
+permissions:
+  contents: read
 
 jobs:
   notify-codeowners:
@@ -13,13 +16,13 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v1
         with:
-          python-version: 3.7
+          python-version: 3.9
       - run: pip install pygithub click
       - name: Drop a message for codeowners
         env:
           PR: ${{ steps.findPr.outputs.pr }}
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
           python .github/workflows/notify_codeowners.py \
               --pull-request-id=auto \
-              --no-dry-run \
-              https://raw.githubusercontent.com/tensorflow/addons/master/.github/CODEOWNERS
+              --no-dry-run
